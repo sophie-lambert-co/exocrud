@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+    <title>Votre Application</title>
+    <script defer src="main.js"></script>
+</head>
+
+<body onload="updateLists()">
+    <div id="colors-section">
+        <h2>Liste des Couleurs</h2>
+        <ul id="color-list">
+            <!-- Les couleurs seront affichées ici -->
+        </ul>
+    </div>
+
+
+    <div id="add-color-form">
+        <h3>Ajouter une Couleur</h3>
+        <form id="color-form">
+            <label for="color-name">Nom de la Couleur:</label>
+            <input type="text" id="color-name" required>
+            <label for="color-hex">Hexadecimal RVB:</label>
+            <input type="text" id="color-hex" required>
+            <button type="button" id="add-color-button" onclick="addColor()">Ajouter Couleur</button>
+        </form>
+    </div>
+
+    <div id="update-color-form">
+        <h3>Modifier une Couleur</h3>
+        <form id="update-color-form">
+            <label for="update-color-id">ID de la Couleur:</label>
+            <input type="number" id="update-color-id" required>
+            <label for="update-color-name">Nouveau Nom:</label>
+            <input type="text" id="update-color-name" required>
+            <button type="button" id="update-color-button" onclick="updateColor()">Modifier Couleur</button>
+        </form>
+    </div>
+
+    <div id="delete-color-form">
+        <h3>Supprimer une Couleur</h3>
+        <form id="delete-color-form">
+            <label for="delete-color-id">ID de la Couleur à Supprimer:</label>
+            <input type="number" id="delete-color-id" required>
+            <button type="button" id="delete-color-button" onclick="deleteColor()">Supprimer Couleur</button>
+        </form>
+    </div>
+
+
+    <div id="colors-output">
+        <h3>Sortie des Couleurs:</h3>
+        <ul id="color-output-list">
+            <!-- Les sorties des couleurs seront affichées ici -->
+        </ul>
+    </div>
+
+
+    <div id="foods-section">
+        <h2>Liste des Aliments</h2>
+        <ul id="food-list">
+            <!-- Les aliments seront affichés ici -->
+        </ul>
+    </div>
+
+    <div id="add-food-form">
+        <h3>Ajouter un Aliment</h3>
+        <form id="food-form">
+            <!-- Ajoutez d'autres champs pour les détails de l'aliment -->
+            <label for="food-name">Nom de l'Aliment:</label>
+            <input type="text" id="food-name" required>
+            <label for="food-weight">Poids Moyen:</label>
+            <input type="number" id="food-weight" step="0.01" required>
+            <label for="food-calories">Calories:</label>
+            <input type="number" id="food-calories" required>
+            <label for="food-vitamins">Vitamines C:</label>
+            <input type="number" id="food-vitamins" required>
+            <label for="food-type-id">ID du Type:</label>
+            <input type="number" id="food-type-id" required>
+            <label for="food-color-id">ID de la Couleur:</label>
+            <input type="number" id="food-color-id" required>
+            <button type="button" id="add-food-button" onclick="addFood()">Ajouter Aliment</button>
+        </form>
+    </div>
+
+    <div id="update-food-form">
+        <h3>Modifier un Aliment</h3>
+        <form id="update-food-form">
+            <!-- Ajoutez des champs pour les détails de l'aliment -->
+            <label for="update-food-id">ID de l'Aliment:</label>
+            <input type="number" id="update-food-id" required>
+            <label for="update-food-name">Nouveau Nom:</label>
+            <input type="text" id="update-food-name" required>
+            <label for="update-food-weight">Nouveau Poids Moyen:</label>
+            <input type="number" id="update-food-weight" step="0.01" required>
+            <label for="update-food-calories">Nouvelles Calories:</label>
+            <input type="number" id="update-food-calories" required>
+            <label for="update-food-vitamins">Nouvelles Vitamines C:</label>
+            <input type="number" id="update-food-vitamins" required>
+            <label for="update-food-type-id">Nouvel ID du Type:</label>
+            <input type="number" id="update-food-type-id" required>
+            <label for="update-food-color-id">Nouvel ID de la Couleur:</label>
+            <input type="number" id="update-food-color-id" required>
+            <button type="button" id="update-food-button" onclick="updateFood()">Modifier Aliment</button>
+        </form>
+    </div>
+
+    <div id="delete-food-form">
+        <h3>Supprimer un Aliment</h3>
+        <form id="delete-food-form">
+            <label for="delete-food-id">ID de l'Aliment à Supprimer:</label>
+            <input type="number" id="delete-food-id" required>
+            <button type="button" id="delete-food-button" onclick="deleteFood()">Supprimer Aliment</button>
+        </form>
+    </div>
+
+
+    <div id="foods-output">
+        <h3>Sortie des Aliments:</h3>
+        <ul id="food-output-list">
+            <!-- Les sorties des aliments seront affichées ici -->
+        </ul>
+    </div>
+
+
+</body>
+
+</html>

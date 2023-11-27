@@ -1,0 +1,87 @@
+# Ajouter une aliments
+POST http://localhost:8080/aliments
+Content-Type: application/json
+
+{
+  "id": 1,
+  "nom": "Rouge",
+  "hexadecimalRVB": "#FF0000"
+}
+
+###
+
+# Obtenir une aliments par ID
+GET http://localhost:8080/aliments/1
+
+
+###
+
+# Obtenir toutes les alimentss
+GET http://localhost:8080/aliments
+
+###
+
+# Modifier une aliments par ID
+PUT http://localhost:8080/aliments/1
+Content-Type: application/json
+
+{
+  "nom": "NouveauRouge",
+  "hexadecimalRVB": "#FF0000"
+}
+
+###
+
+# Supprimer une aliments par ID
+DELETE http://localhost:8080/aliments/1
+
+
+
+############################
+
+
+
+# Modifier un aliment par ID
+PUT http://localhost:8080/aliments/1
+Content-Type: application/json
+
+{
+  "nom": "NouvellePomme",
+  "poidsMoyen": 0.1,
+  "calories": 60,
+  "vitaminesC": 0,
+  "typeId": 2,
+  "couleurId": 2
+}
+
+###
+
+# Obtenir un aliments par ID
+GET http://localhost:8080/aliments/1
+
+
+###
+
+# Obtenir tout les alimentss
+GET http://localhost:8080/aliments
+
+###
+
+# Modifier un aliment par ID
+PUT http://localhost:8080/aliments/1
+Content-Type: application/json
+
+{
+  "nom": "NouvellePomme",
+  "poidsMoyen": 0.1,
+  "calories": 60,
+  "vitaminesC": 0,
+  "typeId": 2,
+  "couleurId": 2
+}
+
+
+
+
+# Supprimer une aliments par ID
+DELETE http://localhost:8080/aliments/1
