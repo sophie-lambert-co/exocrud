@@ -1,5 +1,5 @@
 # Ajouter une aliments
-POST http://localhost:8080/aliments
+POST http://localhost:8080/couleur
 Content-Type: application/json
 
 {
@@ -10,19 +10,19 @@ Content-Type: application/json
 
 ###
 
-# Obtenir une aliments par ID
-GET http://localhost:8080/aliments/1
+# Obtenir une aliments par ID // ICI PROBLEME
+GET http://localhost:8080/couleur/4
 
 
 ###
 
 # Obtenir toutes les alimentss
-GET http://localhost:8080/aliments
+GET http://localhost:8080/couleur
 
 ###
 
-# Modifier une aliments par ID
-PUT http://localhost:8080/aliments/1
+# Modifier une aliments par ID // ICI PROBLEME
+PUT http://localhost:8080/couleur/23
 Content-Type: application/json
 
 {
@@ -33,7 +33,7 @@ Content-Type: application/json
 ###
 
 # Supprimer une aliments par ID
-DELETE http://localhost:8080/aliments/1
+DELETE http://localhost:8080/couleur/12
 
 
 
@@ -41,7 +41,7 @@ DELETE http://localhost:8080/aliments/1
 
 
 
-# Modifier un aliment par ID
+# Modifier un aliment par ID // ICI PROBLEME
 PUT http://localhost:8080/aliments/1
 Content-Type: application/json
 
@@ -56,7 +56,7 @@ Content-Type: application/json
 
 ###
 
-# Obtenir un aliments par ID
+# Obtenir un aliments par ID // ICI PROBLEME
 GET http://localhost:8080/aliments/1
 
 
@@ -67,7 +67,7 @@ GET http://localhost:8080/aliments
 
 ###
 
-# Modifier un aliment par ID
+# Modifier un aliment par ID  // ICI PROBLEME
 PUT http://localhost:8080/aliments/1
 Content-Type: application/json
 
@@ -80,8 +80,8 @@ Content-Type: application/json
   "couleurId": 2
 }
 
+###
 
 
-
-# Supprimer une aliments par ID
+# Supprimer une aliments par ID  // ICI PROBLEME
 DELETE http://localhost:8080/aliments/1

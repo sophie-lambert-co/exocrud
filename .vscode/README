@@ -1,0 +1,76 @@
+# exocrud
+
+exocrud est un projet CRUD en Java qui interagit avec une base de données nommée "alimentations" MySQL.
+Le front end n'est pas implémenté dans ce projet.
+
+## Guide de l'étudiant : Application de gestion de base de données
+
+## Description
+
+Cette application est un système de gestion de base de données permettant de gérer des informations sur des aliments et des couleurs. Elle fournit une interface permettant de créer, lire, mettre à jour et supprimer des enregistrements dans les tables correspondantes de la base de données. L'application utilise des servlets Java pour gérer les requêtes HTTP et interagir avec la base de données.
+
+## Structure des fichiers
+
+- **com.package1.database** : Ce package contient les classes principales de l'application.
+
+  - **Main.java** : La classe principale de l'application qui initialise la connexion à la base de données et contient les méthodes principales pour interagir avec les tables de la base de données. Elle utilise JDBC pour se connecter à la base de données MySQL.
+
+  - **ConnectDatabase.java** : Cette classe gère la connexion à la base de données en utilisant JDBC. Elle encapsule la logique de connexion et de déconnexion à la base de données.
+
+  - **CrudAlimentImpl.java** : Implémente les opérations CRUD pour la table "Aliment". Cette classe est responsable de l'ajout, de la lecture, de la mise à jour et de la suppression des enregistrements d'aliments dans la base de données.
+
+  - **CrudCouleurImpl.java** : Implémente les opérations CRUD pour la table "Couleur". Cette classe est responsable de l'ajout, de la lecture, de la mise à jour et de la suppression des enregistrements de couleurs dans la base de données.
+
+  - **handler** : Ce package contient les gestionnaires HTTP pour les différentes routes de l'API.
+
+    - **CouleurHandler.java** : Gestionnaire HTTP pour les requêtes relatives aux couleurs. Il interagit avec la classe `CrudCouleurImpl` pour exécuter les opérations CRUD.
+
+    - **AlimentsHandler.java** : Gestionnaire HTTP pour les requêtes relatives aux aliments. Il interagit avec la classe `CrudAlimentImpl` pour exécuter les opérations CRUD.
+
+  - **model** : Ce package contient les classes de modèle pour les objets de la base de données.
+
+    - **Aliment.java** : Classe représentant les enregistrements de la table "Aliment". Elle contient les propriétés de base telles que le nom, le poids moyen, les calories, etc.
+
+    - **Couleur.java** : Classe représentant les enregistrements de la table "Couleur". Elle contient les propriétés de base telles que le nom et le code RVB.
+
+    - **ResultDataAliment.java** : Classe utilitaire pour encapsuler les données d'un aliment. Elle est utilisée pour encapsuler les données d'un aliment et les transmettre entre les différentes couches de l'application.
+
+    - **ResultDataCouleur.java** : Classe utilitaire pour encapsuler les données d'une couleur. Elle est utilisée pour encapsuler les données d'une couleur et les transmettre entre les différentes couches de l'application.
+
+- **com.package1.servlets** : Ce package contient les servlets qui gèrent les requêtes HTTP.
+
+  - **AlimentsServlets.java** : Servlet pour gérer les requêtes relatives aux aliments. Il utilise la classe `Main` pour interagir avec la base de données et récupérer les données d'aliments.
+
+  - **CouleurServlets.java** : Servlet pour gérer les requêtes relatives aux couleurs. Il utilise la classe `Main` pour interagir avec la base de données et récupérer les données de couleurs.
+
+  - **Router.java** : Servlet qui route les requêtes vers les servlets appropriés en fonction de l'URL demandée. Il agit comme un contrôleur frontal pour l'application, dirigeant le trafic HTTP vers les gestionnaires appropriés.
+
+- **WebContent** : Ce répertoire contient les fichiers HTML, CSS et JavaScript pour l'interface utilisateur de l'application. Dans cette exemple, nous n'avons pas de fichiers de l'interface utilisateur, mais vous pouvez les ajouter si nécessaire.
+
+## Dépendances et technologies utilisées
+
+- **Java Servlet API** : Utilisé pour créer les servlets qui gèrent les requêtes HTTP. Les servlets sont des classes Java qui étendent la classe `HttpServlet` et fournissent une méthode `doGet()` ou `doPost()` pour gérer les requêtes HTTP.
+
+- **Jackson** : Bibliothèque utilisée pour la sérialisation et la désérialisation des objets JSON. Elle permet de convertir les objets Java en JSON et vice versa, facilitant ainsi la communication entre l'application et le client via des données JSON.
+
+- **MySQL Connector/J** : Pilote JDBC utilisé pour la connexion à la base de données MySQL. Il fournit les classes nécessaires pour se connecter à une base de données MySQL et exécuter des requêtes SQL.
+
+- **Apache Tomcat (ou autre conteneur Servlet)** : Utilisé pour exécuter les servlets et servir l'application web. Apache Tomcat est un conteneur Servlet open source qui implémente les spécifications Java Servlet et JavaServer Pages (JSP).
+
+## Comment utiliser l'application
+
+1. **Configuration de la base de données** : Avant d'exécuter l'application, assurez-vous que votre base de données MySQL est configurée et accessible. Vous pouvez configurer les détails de connexion dans la classe `ConnectDatabase.java`.
+
+2. **Compilation et exécution** : Compilez toutes les classes Java de l'application et déployez l'application sur votre serveur Servlet (par exemple, Apache Tomcat).
+
+3. **Navigation dans l'interface utilisateur** : Une fois l'application déployée, vous pouvez accéder à l'interface utilisateur en naviguant vers les URL appropriées. Par exemple, pour accéder à la liste des aliments, vous pouvez visiter `http://localhost:8080/aliments`.
+
+4. **Utilisation des API REST** : L'application expose également des API REST pour interagir avec les données. Vous pouvez envoyer des requêtes HTTP GET, POST, PUT et DELETE aux URL correspondantes pour effectuer des opérations CRUD sur les enregistrements d'aliments et de couleurs.
+
+## Améliorations possibles
+
+- **Sécurité** : Ajouter des mécanismes de sécurité tels que l'authentification et l'autorisation pour protéger l'application contre les attaques malveillantes. Cela peut inclure l'utilisation de jetons JWT, la gestion des sessions, etc.
+- **Tests unitaires** : Écrire des tests unitaires pour tester chaque méthode de manière isolée et garantir un comportement correct. Les frameworks de test tels que JUnit peuvent être utilisés pour cela.
+- **Documentation** : Ajouter des commentaires et de la documentation pour rendre le code plus compréhensible et faciliter la maintenance. Les outils de génération de documentation tels que Javadoc peuvent être utilisés pour générer une documentation à partir du code source.
+- **Gestion des erreurs** : Améliorer la gestion des erreurs pour fournir des messages d'erreur plus informatifs et des réponses HTTP appropriées en cas d'échec des opérations. Cela peut inclure la définition de codes d'erreur standard et la génération de messages d'erreur conviviaux.
+- **Interface utilisateur** : Développer une interface utilisateur conviviale pour permettre aux utilisateurs de gérer les données de manière plus interactive. Cela peut inclure l'utilisation de technologies frontales telles que HTML, CSS, JavaScript, Angular, React, etc.

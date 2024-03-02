@@ -1,26 +1,26 @@
 package com.package1.database.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public interface ICrudDAO<T> {
 
     // Obtenir une couleur ou un Aliment par son ID
-    T getById(int id);
+    T getById(int id)throws SQLException;
 
     // Obtenir toutes les couleurs ou Aliments
-    List<T> getAll(int id);
+    List<T> getAll() throws SQLException;
 
-    boolean ajouter(T objet);
+    boolean ajouter(T objet)throws SQLException;
 
     // Supprimer une couleur ou un aliment par son ID
-    boolean supprimer(int id);
+    boolean supprimer(int id)throws SQLException;
 
-    boolean modifier(int id, T objet);
+    boolean modifier(int id, T objet)throws SQLException;
 
-    default String getAllAsJson(int id) {
+    default String getAllAsJson() {
         return "[]"; // ou tout autre JSON par défaut que vous souhaitez renvoyer
     }
-
 
 
     // Ajouter une couleur

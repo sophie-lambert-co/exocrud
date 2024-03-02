@@ -9,13 +9,13 @@ import java.sql.SQLException;
 
 /**
  * La classe ConnectDatabase gère la connexion à la base de données.
-* Elle utilise JDBC (Java Database Connectivity) pour interagir avec une base de données MySQL.
+ * Elle utilise JDBC (Java Database Connectivity) pour interagir avec une base de données MySQL.
  */
 public class ConnectDatabase {
-    private Connection connexion;
-    private String url;
-    private String utilisateur;
-    private String motDePasse;
+    private Connection connexion; // La connexion à la base de données
+    private String url; // L'URL de la base de données
+    private String utilisateur; // Le nom d'utilisateur de la base de données
+    private String motDePasse; // Le mot de passe de la base de données
 
     // Constructeur pour initialiser la connexion à la base de données
     public ConnectDatabase(String url, String utilisateur, String motDePasse) {

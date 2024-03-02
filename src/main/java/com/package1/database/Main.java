@@ -7,12 +7,8 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-
-// Importation  de la bibliothèque Java Util
-//  bibliothèque standard de Java 
+import java.sql.SQLException;
 import java.util.List;
-
-// Importation de l'implémentation spécifique de l'interface ICrudDAO pour la gestion des couleurs
 import com.package1.database.dao.impl.CrudCouleurImpl;
 import com.package1.database.dao.impl.JsonUtil;
 import com.package1.database.dao.impl.CrudAlimentImpl;
@@ -20,21 +16,9 @@ import com.package1.database.model.Aliment;
 import com.package1.database.model.AlimentPrinter;
 import com.package1.database.handler.CouleurHandler;
 import com.package1.database.handler.AlimentsHandler;
-
-// Importation de la classe Couleur du modèle de données
-// Cette classe représente un objet Couleur qui peut être manipulé dans le code.
 import com.package1.database.model.Couleur;
 import com.package1.database.model.CouleurPrinter;
 
-/**
- * En Java, DAO signifie généralement "Data Access Object". C'est un modèle de
- * conception (pattern) qui fournit une interface abstraite pour certains types
- * d'opérations sur une source de données, telle qu'une base de données. Le but
- * d'un DAO est de séparer la logique d'accès aux données de la logique métier
- * de l'application.
- **/
-
-// Classe principale du programme
 public class Main {
 
     private static ConnectDatabase connectDatabase;
@@ -42,26 +26,43 @@ public class Main {
     private static CrudAlimentImpl crudAlimentImpl;
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public String getAllColorsAsJson() throws JsonProcessingException {
-        List<Couleur> couleurs = crudCouleurImpl.getAll(0);
+    // Constructeur pour initialiser les instances de connectDatabase, crudCouleurImpl et crudAlimentImpl
+    public Main() {
+        connectDatabase = new ConnectDatabase("jdbc:mysql://localhost:8889/alimentations", "root", "root");
+        crudCouleurImpl = new CrudCouleurImpl(connectDatabase.getConnection());
+        crudAlimentImpl = new CrudAlimentImpl(connectDatabase.getConnection());
+    }
+
+    // Méthode pour récupérer toutes les couleurs sous forme de JSON
+    public String getAllColorsAsJson() throws JsonProcessingException, SQLException {
+        List<Couleur> couleurs = crudCouleurImpl.getAll();
         return objectMapper.writeValueAsString(couleurs);
     }
 
+    // Méthode pour récupérer tous les aliments sous forme de JSON
     public String getAllAlimentsAsJson() throws JsonProcessingException {
-        List<Aliment> aliments = crudAlimentImpl.getAll(0);
+        List<Aliment> aliments = crudAlimentImpl.getAll();
         return objectMapper.writeValueAsString(aliments);
     }
 
+    // Méthode pour mettre à jour un aliment à partir d'un JSON
     public boolean updateAlimentFromJson(String json) {
         try {
-            Aliment aliment = JsonUtil.fromJson(json, Aliment.class);
-            return modifierAliment(aliment.getId(), aliment);
-        } catch (IOException e) {
+            Aliment aliment = JsonUtil.jsonToObject(json, Aliment.class);
+            if (aliment != null) {
+                return modifier(aliment.getId(), aliment);
+            } else {
+                System.err.println("Erreur lors de la conversion du JSON en objet Aliment.");
+                return false;
+            }
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la mise à jour de l'aliment à partir du JSON : " + e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
 
+    // Méthode pour créer un aliment à partir d'un JSON
     public Aliment createAlimentFromJson(String json) {
         try {
             Aliment nouvelAliment = objectMapper.readValue(json, Aliment.class);
@@ -69,15 +70,14 @@ public class Main {
                 if (nouvelAliment.getPoidsMoyen() == 0.0) {
                     System.out.println("Erreur : Le champ 'poidsMoyen' est obligatoire.");
                     return null;
-                }
-    
-                if (crudAlimentImpl.ajouter(nouvelAliment)) {
-                    System.out.println("Aliment créé avec succès!");
-                    // Utilisez l'id pour obtenir et imprimer les détails de l'aliment
-                    AlimentPrinter.printAliment(crudAlimentImpl.getById(nouvelAliment.getId()));
-                    return nouvelAliment;
                 } else {
-                    System.out.println("Erreur lors de la création de l'aliment.");
+                    if (crudAlimentImpl.ajouter(nouvelAliment)) {
+                        System.out.println("Aliment créé avec succès!");
+                        AlimentPrinter.printAliment(crudAlimentImpl.getById(nouvelAliment.getId()));
+                        return nouvelAliment;
+                    } else {
+                        System.out.println("Erreur lors de la création de l'aliment.");
+                    }
                 }
             } else {
                 System.out.println("Erreur : Impossible de mapper le JSON à un objet Aliment.");
@@ -88,8 +88,8 @@ public class Main {
         return null;
     }
 
-    // Méthode pour mettre à jour une couleur à partir de données JSON
-    public boolean updateCouleurFromJson(int id, String json) {
+    // Méthode pour mettre à jour une couleur à partir d'un JSON
+    public boolean updateCouleurFromJson(int id, String json) throws SQLException {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             Couleur updatedCouleur = objectMapper.readValue(json, Couleur.class);
@@ -100,71 +100,49 @@ public class Main {
         }
     }
 
-    public boolean createCouleurFromJson(String json) {
-        try {
-            Couleur nouvelleCouleur = JsonUtil.fromJson(json, Couleur.class);
-            return createCouleur(nouvelleCouleur.getId(), nouvelleCouleur.getNom(),
-                    nouvelleCouleur.getHexadecimalRVB());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public static void sendResponse(HttpExchange exchange, String response) {
-        // implémentez la logique pour envoyer la réponse HTTP
-    }
-
-    public Main() {
-        connectDatabase = new ConnectDatabase("jdbc:mysql://localhost:/alimentations", "root", "root");
-        crudCouleurImpl = new CrudCouleurImpl(connectDatabase.getConnection());
-        crudAlimentImpl = new CrudAlimentImpl(connectDatabase.getConnection());
-    }
-
-    public static void main(String[] args) throws IOException {
+    // Méthode pour démarrer le serveur HTTP et les différents contextes
+    public static void main(String[] args) throws IOException, SQLException {
         Main main = new Main();
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/couleur", new CouleurHandler(main));
         server.createContext("/aliments", new AlimentsHandler(main));
+        server.createContext("/", (exchange -> {
+            // Gestionnaire d'erreurs global
+            try {
+                exchange.sendResponseHeaders(404, 0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                exchange.close();
+            }
+        }));
         server.setExecutor(null);
         server.start();
-        main.createCouleur(78, "Rouge", "#FF0000");
-        main.getAllColor();
-        main.getOneColor(1, "Rouge", "#FF0000");
-        main.modifierCouleur(12, new Couleur(0, null, null));
-        main.supprimerCouleur(36);
-        main.createAliment(44, "Pomme", 0.1, 50, 0, 1, 1);
-        main.getAllAliments();
-        main.getOneAliment(1);
-        main.modifierAliment(46, new Aliment(46, "NouvellePomme", 0.1, 60, 0, 2, 2));
-        main.disconnect();
     }
 
-    // Méthode pour mettre à jour un aliment à partir de données JSON
-    public boolean updateAlimentFromJson(int id, String json) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Aliment updatedAliment = objectMapper.readValue(json, Aliment.class);
-            return modifierAliment(id, updatedAliment);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-
+    // Méthode pour créer une couleur à partir de paramètres
     public boolean createCouleur(int id, String nom, String hexadecimalRVB) {
-        Couleur nouvelleCouleur = new Couleur(id, hexadecimalRVB, hexadecimalRVB);
-        if (crudCouleurImpl.ajouter(nouvelleCouleur)) {
-            System.out.println("Couleur créée avec succès!");
-            CouleurPrinter.printCouleur(crudCouleurImpl.getById(id));
-            return true;
-        } else {
-            System.out.println("Erreur lors de la création de la couleur.");
+        try {
+            Couleur nouvelleCouleur = new Couleur(id, nom, hexadecimalRVB);
+
+            System.out.println("Création de couleur - ID: " + id + ", Nom: " + nom + ", RVB: " + hexadecimalRVB);
+
+            if (crudCouleurImpl.ajouter(nouvelleCouleur)) {
+                System.out.println("Couleur créée avec succès!");
+                CouleurPrinter.printCouleur(crudCouleurImpl.getById(id));
+                return true;
+            } else {
+                System.out.println("Erreur lors de la création de la couleur.");
+                return false;
+            }
+        } catch (Exception e) {
+            System.out.println("Erreur inattendue lors de la création de la couleur");
+            e.printStackTrace(); // Affichez également la trace complète de l'erreur
             return false;
         }
     }
 
+    // Méthode pour créer un aliment à partir de paramètres
     public boolean createAliment(int id, String nom, double poidsMoyen, int calories, int vitaminesC, int typeId,
             int couleurId) {
         Aliment nouvelAliment = new Aliment(id, nom, poidsMoyen, calories, vitaminesC, typeId, couleurId);
@@ -178,17 +156,42 @@ public class Main {
         }
     }
 
-    public Couleur getOneColor(int id, String nom, String hexadecimal_id) {
+    // Méthode pour mettre à jour un aliment à partir d'un JSON et d'un ID
+    public boolean updateAlimentFromJson(int id, String json) throws SQLException {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Aliment updatedAliment = objectMapper.readValue(json, Aliment.class);
+            return modifier(id, updatedAliment);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    // Méthode pour créer une couleur à partir d'un JSON
+    public boolean createCouleurFromJson(String json) throws SQLException {
+        try {
+            Couleur nouvelleCouleur = objectMapper.readValue(json, Couleur.class);
+            return createCouleur(nouvelleCouleur.getId(), nouvelleCouleur.getNom(), nouvelleCouleur.getHexadecimalRVB());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Méthode pour récupérer une couleur par ID
+    public Couleur getOneColor(int id, String nom, String hexadecimal_id) throws SQLException {
         Couleur couleur = crudCouleurImpl.getById(id);
         if (couleur != null) {
-            System.out.println("Couleur recuperée avec succès!");
+            System.out.println("Couleur récupérée avec succès!");
             CouleurPrinter.printCouleur(couleur);
         } else {
-            System.out.println("Erreur lors de la recupération de la couleur.");
+            System.out.println("Erreur lors de la récupération de la couleur.");
         }
         return couleur;
     }
 
+    // Méthode pour récupérer un aliment par ID
     public Aliment getOneAliment(int id) {
         Aliment aliment = crudAlimentImpl.getById(id);
         if (aliment != null) {
@@ -200,8 +203,9 @@ public class Main {
         return aliment;
     }
 
-    public List<Couleur> getAllColor() {
-        List<Couleur> couleurs = crudCouleurImpl.getAll(0);
+    // Méthode pour récupérer toutes les couleurs
+    public List<Couleur> getAllColor() throws SQLException {
+        List<Couleur> couleurs = crudCouleurImpl.getAll();
         if (!couleurs.isEmpty()) {
             System.out.println("Toutes les couleurs ont été récupérées avec succès!");
             for (Couleur couleur : couleurs) {
@@ -213,8 +217,9 @@ public class Main {
         return couleurs;
     }
 
+    // Méthode pour récupérer tous les aliments
     public List<Aliment> getAllAliments() {
-        List<Aliment> aliments = crudAlimentImpl.getAll(0);
+        List<Aliment> aliments = crudAlimentImpl.getAll();
         if (!aliments.isEmpty()) {
             System.out.println("Tous les aliments ont été récupérés avec succès!");
             for (Aliment aliment : aliments) {
@@ -226,7 +231,8 @@ public class Main {
         return aliments;
     }
 
-    public boolean modifierCouleur(int id, Couleur couleur) {
+    // Méthode pour mettre à jour une couleur
+    public boolean modifierCouleur(int id, Couleur couleur) throws SQLException {
         if (crudCouleurImpl.modifier(id, couleur)) {
             System.out.println("Couleur modifiée avec succès!");
             int idNouvelleCouleur = couleur.getId();
@@ -238,7 +244,8 @@ public class Main {
         }
     }
 
-    public boolean modifierAliment(int id, Aliment aliment) {
+    // Méthode pour mettre à jour un aliment
+    public boolean modifier(int id, Aliment aliment) {
         if (crudAlimentImpl.modifier(id, aliment)) {
             System.out.println("Aliment modifié avec succès!");
             AlimentPrinter.printAliment(crudAlimentImpl.getById(id));
@@ -249,7 +256,8 @@ public class Main {
         }
     }
 
-    public boolean supprimerCouleur(int id) {
+    // Méthode pour supprimer une couleur
+    public boolean supprimer(int id) throws SQLException {
         if (crudCouleurImpl.supprimer(id)) {
             System.out.println("Couleur supprimée avec succès!");
             CouleurPrinter.printCouleur(crudCouleurImpl.getById(id));
@@ -260,6 +268,7 @@ public class Main {
         }
     }
 
+    // Méthode pour supprimer un aliment
     public boolean supprimerAliment(int id) {
         if (crudAlimentImpl.supprimer(id)) {
             System.out.println("Aliment supprimé avec succès!");
@@ -271,8 +280,7 @@ public class Main {
         }
     }
 
-    // ... (autres méthodes de votre classe)
-
+    // Méthode pour déconnecter la base de données
     public void disconnect() {
         connectDatabase.disconnectDatabase();
     }
